@@ -1,5 +1,6 @@
 """
 * Description: Define the Minesweeper.
+* Author: Zearo-Jiguang
 """
 
 import random
@@ -29,7 +30,7 @@ class Minesweeper:
         self.row: int = row
         self.col: int = col
         self.mineNumber: int = mine_number
-        self.emptySquareNumber: int = mine_number
+        self.emptySquareNumber: int = row * col - mine_number
         self.map = []
 
     # static member
@@ -58,20 +59,21 @@ class Minesweeper:
         self.row = new_row
         self.col = new_col
         self.mineNumber = new_mine_number
-        self.emptySquareNumber: int = mine_number
+        self.emptySquareNumber: int = new_row * new_col - new_mine_number
         self.generate_the_map()
         self._test_print_the_map()
 
     def left_mouse_click_the_map(self, click_row, click_col):
         if click_row < 0 or click_row >= self.row or click_col < 0 or click_col >= self.col:
             # TODO: error
-            return
+            return None
         # click the unrevealed mine
         if self.map[click_row][click_col] == State.Mine_Unrevealed:
             self.map[click_row][click_col] = State.Mine_Revealed
+            return {"mine": [[click_row, click_col]]}
         # click the unrevealed empty square
         elif self.map[click_row][click_col] == State.EmptySquare_Unrevealed:
-            self._bfs_click_the_map(click_row, click_col)
+            return self._bfs_click_the_map(click_row, click_col)
 
     # private function dealing the map when click State.EmptySquare_Unrevealed
     def _bfs_click_the_map(self, click_row, click_col):
@@ -79,6 +81,7 @@ class Minesweeper:
         q = queue.Queue()
         q.put((click_row, click_col))
         vis[click_row][click_col] = True
+        ans = {"near_mine": [], "near_no_mine": []}
         while not q.empty():
             pos = q.get()
             near_mine_number: int = 0
@@ -94,8 +97,10 @@ class Minesweeper:
             # when near_mine_number > 8 , it will be an error.
             if 0 < near_mine_number <= 8:
                 self.map[x][y] = self.__class__.state_dict[near_mine_number]
+                ans["near_mine"].append([x, y])
             elif near_mine_number == 0:
                 self.map[x][y] = State.EmptySquare_Revealed
+                ans["near_no_mine"].append([x, y])
                 self.emptySquareNumber -= 1
                 for i in range(8):
                     tx = x + self.__class__.dir_x[i]
@@ -105,6 +110,8 @@ class Minesweeper:
                         continue
                     q.put((tx, ty))
                     vis[tx][ty] = True
+        print(ans)
+        return ans
 
     ''' The functions below this line are for testing. '''
     def _test_print_the_map(self):
