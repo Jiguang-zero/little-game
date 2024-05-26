@@ -1,8 +1,9 @@
 # -*- coding:gb18030 -*-
 
 import pgzrun
-# from pgzero.constants import mouse
 
+from mine_sweeper import State
+from mine_sweeper import state_can_be_right_click
 from mine_sweeper import Minesweeper
 from mine_sweeper_resource import actor_path_dict
 
@@ -21,6 +22,7 @@ class MinesweeperGame:
         self.gameStatus = "begin"  # running, win, lose
         self.maps = []
         self.style = "normal_style"
+        self.clickTimes = 0
 
     def draw(self):
         if self.gameStatus == "begin":
@@ -31,33 +33,64 @@ class MinesweeperGame:
             item.draw()
 
     def click(self, x, y):
+        while (self.clickTimes == 0
+               and self.MinesweeperGameMap.map[x][y] == State.Mine_Unrevealed):
+            self.MinesweeperGameMap.generate_the_map()
+
         change_square = self.MinesweeperGameMap.left_mouse_click_the_map(x, y)
         if change_square is None:
             return
+
+        self.clickTimes += 1
+
         if "mine" in change_square:
-            print(change_square["mine"])
-            # game over
+            mine = change_square["mine"][0]
+            self.maps[mine[0] * self.MinesweeperGameMap.col + mine[1]].image = (
+                self._get_actor_with_state(
+                    self.MinesweeperGameMap.map[mine[0]][mine[1]]
+                )
+            )
+            self.gameStatus = "lose"
             return
 
         for item in change_square:
             for square in change_square[item]:
                 self.maps[square[0] * self.MinesweeperGameMap.col + square[1]].image = (
-                    self._get_actor_with_style(
+                    self._get_actor_with_state(
                         self.MinesweeperGameMap.map[square[0]][square[1]]))
+
+        # Check whether you win the game.
+        if self.MinesweeperGameMap.emptySquareNumber == 0:
+            self.gameStatus = "win"
+
+    def right_click(self, x, y):
+        actor = self.maps[x * self.MinesweeperGameMap.col + y]
+        if state_can_be_right_click(self.MinesweeperGameMap.map[x][y]):
+            if actor.image == self._get_actor_with_style("flag"):
+                actor.image = self._get_actor_with_style("sign")
+            elif actor.image == self._get_actor_with_style("sign"):
+                actor.image = self._get_actor_with_state(
+                    self.MinesweeperGameMap.map[x][y]
+                )
+            elif actor.image != self._get_actor_with_style("flag"):
+                actor.image = self._get_actor_with_style("flag")
 
     ''' We will define private function below this line. '''
     """
     *Description: Get the full path of actor.
     """
 
-    def _get_actor_with_style(self, minesweeper_state):
+    def _get_actor_with_state(self, minesweeper_state):
         actor_path = actor_path_dict[minesweeper_state]
-        return self.style + "//" + actor_path
+        return self._get_actor_with_style(actor_path)
+
+    def _get_actor_with_style(self, style):
+        return self.style + "//" + style
 
     def _init_maps(self):
         for i in range(self.MinesweeperGameMap.row):
             for j in range(self.MinesweeperGameMap.col):
-                mine_square = Actor(self._get_actor_with_style(self.MinesweeperGameMap.map[i][j]))
+                mine_square = Actor(self._get_actor_with_state(self.MinesweeperGameMap.map[i][j]))
                 mine_square.x = i * TILE_SIZE + 30
                 mine_square.y = j * TILE_SIZE + 40
                 self.maps.append(mine_square)
@@ -72,11 +105,13 @@ def draw():
 
 
 def on_mouse_down(pos, button):
+    click_i = (pos[0] - 30 + 10) // TILE_SIZE
+    click_j = (pos[1] - 40 + 10) // TILE_SIZE
+
     if button == mouse.LEFT:
-        click_i = (pos[0] - 30 + 10) // TILE_SIZE
-        click_j = (pos[1] - 40 + 10) // TILE_SIZE
-        print(pos)
         game.click(click_i, click_j)
+    elif button == mouse.RIGHT:
+        game.right_click(click_i, click_j)
 
 
 pgzrun.go()

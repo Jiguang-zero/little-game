@@ -25,6 +25,12 @@ class State(Enum):
     EmptySquare_Revealed = 13
 
 
+def state_can_be_right_click(state):
+    if state == State.Mine_Unrevealed or state == State.EmptySquare_Unrevealed:
+        return True
+    return False
+
+
 class Minesweeper:
     def __init__(self, row, col, mine_number):
         self.row: int = row
@@ -113,6 +119,7 @@ class Minesweeper:
         return ans
 
     ''' The functions below this line are for testing. '''
+
     def _test_print_the_map(self):
         for row in self.map:
             print([element.value for element in row])

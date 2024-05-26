@@ -5,16 +5,12 @@
 from mine_sweeper import State
 
 actor_path_dict = {
-
+    State.EmptySquare_Unrevealed: "unrevealed",
+    State.Mine_Unrevealed: "unrevealed",
+    State.EmptySquare_Revealed: "empty",
+    State.Mine_Revealed: "mine",
 }
-
-for item in State:
-    actor_path_dict[item] = "unrevealed"
-
-actor_path_dict[State.Mine_Revealed] = "revealed"
-actor_path_dict[State.EmptySquare_Revealed] = "revealed"
 
 state_dict = {member.value: member for member in State}
 for i in range(1, 9):
-    actor_path_dict[state_dict[i]] = "revealed"
-
+    actor_path_dict[state_dict[i]] = "digit" + str(i)
