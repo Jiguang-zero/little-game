@@ -110,7 +110,6 @@ class Minesweeper:
                         continue
                     q.put((tx, ty))
                     vis[tx][ty] = True
-        print(ans)
         return ans
 
     ''' The functions below this line are for testing. '''
