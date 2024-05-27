@@ -67,7 +67,7 @@ class Minesweeper:
         self.mineNumber = new_mine_number
         self.emptySquareNumber: int = new_row * new_col - new_mine_number
         self.generate_the_map()
-        self._test_print_the_map()
+        # self._test_print_the_map()
 
     def left_mouse_click_the_map(self, click_row, click_col):
         if click_row < 0 or click_row >= self.row or click_col < 0 or click_col >= self.col:
@@ -100,6 +100,7 @@ class Minesweeper:
                     continue
                 # We just think the unrevealed mine as when the mine is revealed, we lost the game.
                 near_mine_number += 1 if self.map[tx][ty] == State.Mine_Unrevealed else 0
+            self.emptySquareNumber -= 1
             # when near_mine_number > 8 , it will be an error.
             if 0 < near_mine_number <= 8:
                 self.map[x][y] = self.__class__.state_dict[near_mine_number]
@@ -107,7 +108,6 @@ class Minesweeper:
             elif near_mine_number == 0:
                 self.map[x][y] = State.EmptySquare_Revealed
                 ans["near_no_mine"].append([x, y])
-                self.emptySquareNumber -= 1
                 for i in range(8):
                     tx = x + self.__class__.dir_x[i]
                     ty = y + self.__class__.dir_y[i]
