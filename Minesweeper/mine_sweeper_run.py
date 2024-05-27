@@ -26,6 +26,8 @@ class MinesweeperGame:
         self.clickTimes = 0
         self.time_clock = 0
         self.stop_clock = False
+        self.last_click_time = 0
+        self.last_click_square = []
 
     def draw(self):
         if self.gameStatus == "begin":
@@ -56,8 +58,16 @@ class MinesweeperGame:
         if self.gameStatus != "running" or not self._check_whether_in_the_map(x, y):
             return
 
-        self._first_click(x, y)
-        self._left_click_square_details(x, y)
+        if self._check_whether_can_be_double_click(x, y):
+            current_time = time.time()
+            current_square = [x, y]
+            if current_time - self.last_click_time < Constants.DOUBLE_CLICK_INTERVAL and current_square == self.last_click_square:
+                self.double_click_square(x, y)
+            self.last_click_time = current_time
+            self.last_click_square = current_square
+        else:
+            self._first_click(x, y)
+            self._left_click_square_details(x, y)
 
     def level_select(self, pos):
         for item in level_choice:
@@ -81,13 +91,11 @@ class MinesweeperGame:
                 new_y = y + Minesweeper.dir_y[i]
                 if not self._check_whether_in_the_map(new_x, new_y):
                     continue
-                print(new_x, new_y)
                 if (self._get_maps_with_x_y(new_x, new_y).image
                         == self._get_actor_with_style("flag")):
                     flag_numbers += 1
                 else:
                     square_to_be_click.append([new_x, new_y])
-            print(current_square_num, flag_numbers, square_to_be_click)
             if current_square_num == flag_numbers:
                 for square in square_to_be_click:
                     self.left_click_square(square[0], square[1])

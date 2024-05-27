@@ -10,3 +10,5 @@ class Constants:
 
     FIRST_SQUARE_START_X = 30
     FIRST_SQUARE_START_Y = 40
+
+    DOUBLE_CLICK_INTERVAL = 0.4
