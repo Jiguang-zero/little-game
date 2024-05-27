@@ -70,6 +70,28 @@ class MinesweeperGame:
                 self.gameStatus = "running"
                 break
 
+    def double_click_square(self, x, y):
+        if self._check_whether_can_be_double_click(x, y):
+            current_square_num = int(
+                self._get_maps_with_x_y(x, y).image.split("//")[-1][len("digit"):])
+            flag_numbers: int = 0
+            square_to_be_click = []
+            for i in range(8):
+                new_x = x + Minesweeper.dir_x[i]
+                new_y = y + Minesweeper.dir_y[i]
+                if not self._check_whether_in_the_map(new_x, new_y):
+                    continue
+                print(new_x, new_y)
+                if (self._get_maps_with_x_y(new_x, new_y).image
+                        == self._get_actor_with_style("flag")):
+                    flag_numbers += 1
+                else:
+                    square_to_be_click.append([new_x, new_y])
+            print(current_square_num, flag_numbers, square_to_be_click)
+            if current_square_num == flag_numbers:
+                for square in square_to_be_click:
+                    self.left_click_square(square[0], square[1])
+
     def right_click_square(self, x, y):
         if self.gameStatus != "running" or not self._check_whether_in_the_map(x, y):
             return
@@ -116,7 +138,7 @@ class MinesweeperGame:
     # change_square: MinesweeperGameMap.left_mouse_click_the_map
     def _click_mine(self, change_square):
         mine = change_square["mine"][0]
-        self.maps[mine[0] * self.MinesweeperGameMap.col + mine[1]].image = (
+        self._get_maps_with_x_y(mine[0], mine[1]).image = (
             self._get_actor_with_state(
                 self.MinesweeperGameMap.map[mine[0]][mine[1]]
             )
@@ -126,7 +148,7 @@ class MinesweeperGame:
     def _click_empty_square(self, change_square):
         for item in change_square:
             for square in change_square[item]:
-                self.maps[square[0] * self.MinesweeperGameMap.col + square[1]].image = (
+                self._get_maps_with_x_y(square[0], square[1]).image = (
                     self._get_actor_with_state(
                         self.MinesweeperGameMap.map[square[0]][square[1]]))
 
@@ -158,7 +180,21 @@ class MinesweeperGame:
         self._click_empty_square(change_square)
 
     def _check_whether_in_the_map(self, x, y):
-        return 0 <= x < self.MinesweeperGameMap.row and 0 <= y < self.MinesweeperGameMap.col
+        return (0 <= x < self.MinesweeperGameMap.row and
+                0 <= y < self.MinesweeperGameMap.col)
+
+    # array -> 2D. x, y must be right input.
+    def _get_maps_with_x_y(self, x, y):
+        return self.maps[x * self.MinesweeperGameMap.col + y]
+
+    def _check_whether_can_be_double_click(self, x, y):
+        if not self._check_whether_in_the_map(x, y):
+            return False
+        for i in range(1, 9):
+            if (self._get_maps_with_x_y(x, y).image ==
+                    self._get_actor_with_style("digit" + str(i))):
+                return True
+        return False
 
 
 game = MinesweeperGame()
@@ -187,6 +223,8 @@ def on_mouse_down(pos, button):
             game.left_click_square(click_i, click_j)
     elif button == mouse.RIGHT:
         game.right_click_square(click_i, click_j)
+    elif button == mouse.MIDDLE:
+        game.double_click_square(click_i, click_j)
 
 
 pgzrun.go()
