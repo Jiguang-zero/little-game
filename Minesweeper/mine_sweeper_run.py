@@ -225,6 +225,7 @@ class MinesweeperGame:
         )
         self.gameStatus = "lose"
         self.stop_clock = True
+        sounds.explosion.play()
 
     def _click_empty_square(self, change_square):
         for item in change_square:
@@ -237,6 +238,7 @@ class MinesweeperGame:
         if self.MinesweeperGameMap.emptySquareNumber == 0:
             self.gameStatus = "win"
             self.stop_clock = True
+            sounds.win.play()
 
     # first click. And the function will pass if clickTimes != 0
     def _first_click(self, x, y):
