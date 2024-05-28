@@ -55,6 +55,8 @@ class Minesweeper:
             temp: int = random_mine - 1
             self.map[temp // self.col][temp % self.col] = State.Mine_Unrevealed
 
+        self.emptySquareNumber: int = self.row * self.col - self.mineNumber
+
     def change_the_map(self, new_row, new_col, new_mine_number):
         if new_row < 1 or new_col < 1:
             # TODO: log
@@ -65,7 +67,6 @@ class Minesweeper:
         self.row = new_row
         self.col = new_col
         self.mineNumber = new_mine_number
-        self.emptySquareNumber: int = new_row * new_col - new_mine_number
         self.generate_the_map()
         # self._test_print_the_map()
 
