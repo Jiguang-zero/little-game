@@ -2,6 +2,7 @@
 import threading
 import time
 import pgzrun
+import os
 
 from mine_sweeper import State
 from mine_sweeper import state_can_be_right_click
@@ -9,13 +10,16 @@ from mine_sweeper import Minesweeper
 from mine_sweeper_resource import (actor_path_dict, level_choice,
                                    level_set_row_col_mine, restart_actor,
                                    home_actor, option_actor, return_actor, change_actor,
-                                   change_game_value_actors)
+                                   change_game_value_actors, change_style_actor,
+                                   styles, check_box_actor, save_game_setting_actor)
 from mine_sweeper_constants import Constants
 
 TITLE = "Minesweeper"
 TILE_SIZE = Constants.TILE_SIZE
 WIDTH = Constants.SCREEN_WIDTH
 HEIGHT = Constants.SCREEN_HEIGHT
+
+SETTING_FILE = "minesweeper.settings"
 
 
 def draw_in_game_button():
@@ -55,6 +59,20 @@ class MinesweeperGame:
         self.row: int = 0
         self.col: int = 0
         self.mine: int = 0
+        self.mute: bool = False
+
+    def read_setting(self):
+        if os.path.exists(SETTING_FILE):
+            with open(SETTING_FILE, "r") as file:
+                for line in file:
+                    if line.startswith("style:"):
+                        self.style = line.split(":", 1)[1].strip()
+                    if line.startswith("mute:"):
+                        mute_str = line.split(":", 1)[1].strip()
+                        if mute_str == "True":
+                            self.mute = True
+                        elif mute_str == "False":
+                            self.mute = False
 
     def draw(self):
         if self.gameStatus == "begin":
@@ -67,19 +85,6 @@ class MinesweeperGame:
                 item.draw()
             self._draw_data_values()
             draw_in_game_button()
-
-    def start_clock(self):
-        def run_clock():
-            while self.stop_clock is False:
-                self.time_clock += 1
-                time.sleep(1)
-                if self.time_clock >= 999:
-                    self.time_clock = 999
-                    self.stop_clock = True
-
-        clock_thread = threading.Thread(target=run_clock)
-        clock_thread.daemon = True
-        clock_thread.start()
 
     def left_click_square(self, x, y):
         # left mouse click square when the game is running
@@ -158,10 +163,15 @@ class MinesweeperGame:
         if return_actor.collidepoint(pos):
             self.gameStatus = "running"
         self._click_change_value_setting(pos)
+        self._click_change_game_setting(pos)
         if change_actor.collidepoint(pos):
             self.MinesweeperGameMap.change_the_map(self.row, self.col, self.mine)
             self._init_game()
             self.gameStatus = "running"
+        if save_game_setting_actor.collidepoint(pos):
+            with open(SETTING_FILE, "w") as file:
+                file.write("mute: " + str(self.mute) + "\n")
+                file.write("style: " + self.style + "\n")
 
     ''' We will define private function below this line. '''
     """
@@ -225,7 +235,8 @@ class MinesweeperGame:
         )
         self.gameStatus = "lose"
         self.stop_clock = True
-        sounds.explosion.play()
+        if not self.mute:
+            sounds.explosion.play()
 
     def _click_empty_square(self, change_square):
         for item in change_square:
@@ -238,7 +249,8 @@ class MinesweeperGame:
         if self.MinesweeperGameMap.emptySquareNumber == 0:
             self.gameStatus = "win"
             self.stop_clock = True
-            sounds.win.play()
+            if not self.mute:
+                sounds.win.play()
 
     # first click. And the function will pass if clickTimes != 0
     def _first_click(self, x, y):
@@ -248,7 +260,7 @@ class MinesweeperGame:
 
         if self.clickTimes == 0:
             self.stop_clock = False
-            self.start_clock()
+            self._start_clock()
 
     # The details when click square.
     def _left_click_square_details(self, x, y):
@@ -285,6 +297,8 @@ class MinesweeperGame:
         return_actor.draw()
         change_actor.draw()
         self._draw_value_setting()
+        # draw the option: mute or style
+        self._draw_game_setting()
 
     def _draw_value_setting(self):
         option_style = Constants.OPTION_SETTING_STYLE
@@ -298,6 +312,18 @@ class MinesweeperGame:
         for item in change_game_value_actors:
             item[0].draw()
             item[1].draw()
+
+    def _draw_game_setting(self):
+        option_game_style = Constants.OPTION_SETTING_GAME
+        screen.draw.text("¾²Òô: ", option_game_style["mute"]["pos"], color="white",
+                         fontsize=option_game_style["size"], fontname="simple_kai")
+        check_box_actor.image = "check" if self.mute else "uncheck"
+        check_box_actor.draw()
+        screen.draw.text("ÑùÊ½: " + str(self.style), option_game_style["style"]["pos"],
+                         fontsize=option_game_style["size"], fontname="simple_kai", color="white")
+        for item in change_style_actor:
+            item.draw()
+        save_game_setting_actor.draw()
 
     def _click_option(self):
         self.gameStatus = "option"
@@ -319,9 +345,35 @@ class MinesweeperGame:
             self.col = temp_values[1]
             self.mine = temp_values[2]
 
+    def _click_change_game_setting(self, pos):
+        if check_box_actor.collidepoint(pos):
+            self.mute = not self.mute
+
+        style_index = styles.index(self.style)
+        _ = [-1, 1]
+        for i in range(2):
+            if change_style_actor[i].collidepoint(pos):
+                style_index += _[i]
+                if 0 <= style_index < len(styles):
+                    self.style = styles[style_index]
+                break
+
+    def _start_clock(self):
+        def run_clock():
+            while self.stop_clock is False:
+                self.time_clock += 1
+                time.sleep(1)
+                if self.time_clock >= 999:
+                    self.time_clock = 999
+                    self.stop_clock = True
+
+        clock_thread = threading.Thread(target=run_clock)
+        clock_thread.daemon = True
+        clock_thread.start()
+
 
 game = MinesweeperGame()
-flag = False
+game.read_setting()
 
 
 # We must generate update() function, or we can not draw the time each time it updates.

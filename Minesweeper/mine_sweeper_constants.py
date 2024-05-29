@@ -32,25 +32,40 @@ class Constants:
 
     OPTION_SETTING_STYLE = {
         "row": {
-            "pos": (SCREEN_WIDTH // 10, SCREEN_HEIGHT // 3),
+            "pos": (SCREEN_WIDTH // 10, 2 * SCREEN_HEIGHT // 15),
             "change_value": [
-                [4 * SCREEN_WIDTH // 10, SCREEN_HEIGHT // 3],
-                [5 * SCREEN_WIDTH // 10, SCREEN_HEIGHT // 3]
+                [4 * SCREEN_WIDTH // 10, 2 * SCREEN_HEIGHT // 15],
+                [5 * SCREEN_WIDTH // 10, 2 * SCREEN_HEIGHT // 15]
             ]
         },
         "col": {
-            "pos": (SCREEN_WIDTH // 10, 2 * SCREEN_HEIGHT // 5),
+            "pos": (SCREEN_WIDTH // 10, 3 * SCREEN_HEIGHT // 15),
             "change_value": [
-                [4 * SCREEN_WIDTH // 10, 2 * SCREEN_HEIGHT // 5],
-                [5 * SCREEN_WIDTH // 10, 2 * SCREEN_HEIGHT // 5]
+                [4 * SCREEN_WIDTH // 10, 3 * SCREEN_HEIGHT // 15],
+                [5 * SCREEN_WIDTH // 10, 3 * SCREEN_HEIGHT // 15]
             ]
         },
         "mine": {
-            "pos": (SCREEN_WIDTH // 10, 7 * SCREEN_HEIGHT // 15),
+            "pos": (SCREEN_WIDTH // 10, 4 * SCREEN_HEIGHT // 15),
             "change_value": [
-                [4 * SCREEN_WIDTH // 10, 7 * SCREEN_HEIGHT // 15],
-                [5 * SCREEN_WIDTH // 10, 7 * SCREEN_HEIGHT // 15]
+                [4 * SCREEN_WIDTH // 10, 4 * SCREEN_HEIGHT // 15],
+                [5 * SCREEN_WIDTH // 10, 4 * SCREEN_HEIGHT // 15]
             ]
         },
         "size": 32
+    }
+
+    OPTION_SETTING_GAME = {
+        "mute": {
+            "pos": (SCREEN_WIDTH // 10, 8 * SCREEN_HEIGHT // 15),
+            "button": (1 * SCREEN_WIDTH // 4, 8 * SCREEN_HEIGHT // 15)
+        },
+        "style": {
+            "pos": (SCREEN_WIDTH // 10, 9 * SCREEN_HEIGHT // 15),
+            "change_value": [
+                [4 * SCREEN_WIDTH // 10, 9 * SCREEN_HEIGHT // 15],
+                [5 * SCREEN_WIDTH // 10, 9 * SCREEN_HEIGHT // 15]
+            ]
+        },
+        "size": 32,
     }

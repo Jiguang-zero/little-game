@@ -48,7 +48,7 @@ return_actor.y = 1 * Constants.SCREEN_HEIGHT // 10
 
 change_actor = Actor("change")
 change_actor.x = 4 * Constants.SCREEN_WIDTH // 5
-change_actor.y = 3 * Constants.SCREEN_HEIGHT // 5
+change_actor.y = 4 * Constants.SCREEN_HEIGHT // 15
 
 change_game_value_actors = []
 style_map_key = ["row", "col", "mine"]
@@ -61,3 +61,24 @@ for i in range(3):
     decrease_actor.x = option_style[style_map_key[i]]["change_value"][1][0]
     decrease_actor.y = option_style[style_map_key[i]]["change_value"][1][1] + Constants.DEVIATION_FROM_P_AND_F
     change_game_value_actors.append([increase_actor, decrease_actor])
+
+style_option = Constants.OPTION_SETTING_GAME
+
+check_box_actor = Actor("check")
+check_box_actor.x = style_option["mute"]["button"][0]
+check_box_actor.y = style_option["mute"]["button"][1] + Constants.DEVIATION_FROM_P_AND_F
+
+styles = ["normal_style", "mahjong"]
+
+change_style_actor = [
+    Actor("left"),
+    Actor("right")
+]
+for i in range(2):
+    change_style_actor[i].x = style_option["style"]["change_value"][i][0]
+    change_style_actor[i].y = (style_option["style"]["change_value"][i][1]
+                               + Constants.DEVIATION_FROM_P_AND_F)
+
+save_game_setting_actor = Actor("save")
+save_game_setting_actor.x = 4 * Constants.SCREEN_WIDTH // 5
+save_game_setting_actor.y = 11 * Constants.SCREEN_HEIGHT // 15
