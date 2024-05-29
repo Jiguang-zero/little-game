@@ -45,7 +45,7 @@ class MinesweeperGame:
         self.MinesweeperGameMap.generate_the_map()
         self.gameStatus = "begin"  # running, win, lose
         self.maps = []
-        self.style = "normal_style"
+        self.style = "mahjong"
         self.clickTimes = 0
         self.time_clock = 0
         self.stop_clock = False
