@@ -10,3 +10,10 @@
 
 游戏样式 `mahjong`风格的 `mine.jpg` 由好友 `LKH`绘制.
 
+
+
+`pip install pgzero -i https://pypi.tuna.tsinghua.edu.cn/simple`
+
+
+
+`pip install --upgrade pip -i https://mirrors.tuna.tsinghua.edu.cn/`
