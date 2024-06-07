@@ -20,5 +20,7 @@
 
 首次版本完成时间: 2024/5/30
 
-你可以[在此](Minesweeper//README_zh.md)查看细节
+你可以[在此](Minesweeper//README_zh.md)查看细节  
+
+[b站视频](https://m.bilibili.com/video/BV1K7421d7mr) 
 

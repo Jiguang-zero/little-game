@@ -22,4 +22,6 @@ Start: May 25th, 2024
 
 End(The first release): May 30th, 2024
 
-You can see the details in this [document](Minesweeper//README.md).
+You can see the details in this [document](Minesweeper//README.md).  
+
+And you can see the video clicking [this](https://m.bilibili.com/video/BV1K7421d7mr)
