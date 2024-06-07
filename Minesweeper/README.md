@@ -20,7 +20,7 @@ Tools for packaging as `exe` application: `pyinstaller`, `Inno Setup Compiler`
 
 ​	We can run the project with python `3.12.0`.
 
-​	And the project can also run at win 7 , 64bit.
+​	And the project can also run at win 7 , 64bit, 32bit.
 
 ## Resource
 
